@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:portfolio_manager/pages/dashboard_page.dart';
 import 'package:portfolio_manager/pages/login_page.dart';
 import 'theme.dart'; // your custom theme
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(const MainApp());
 }
 
