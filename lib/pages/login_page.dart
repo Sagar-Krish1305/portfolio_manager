@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
 
+
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   LoginPage({super.key});
 
-  void _handleLogin() {
+  void _handleLogin(context) {
     print("Email: ${emailController.text}");
     print("Password: ${passwordController.text}");
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
+    Navigator.pushReplacementNamed(context, '/dashboard');
   }
 
   @override
@@ -67,7 +70,7 @@ class LoginPage extends StatelessWidget {
                     },
                     child: const Text(
                       'Forgot password?',
-                      style: TextStyle(color: kPrimaryTeal),
+                      style: TextStyle(color: kPrimaryCyan),
                     ),
                   ),
                 ),
@@ -77,7 +80,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _handleLogin,
+                  onPressed: () => _handleLogin(context),
                   child: const Text('Login'),
                 ),
               ),
@@ -94,7 +97,7 @@ class LoginPage extends StatelessWidget {
                     onPressed: () {},
                     child: const Text(
                       'Sign up',
-                      style: TextStyle(color: kPrimaryTeal),
+                      style: TextStyle(color: kPrimaryCyan),
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_manager/components/LoginPage.dart';
+import 'package:portfolio_manager/pages/dashboard_page.dart';
+import 'package:portfolio_manager/pages/login_page.dart';
 import 'theme.dart'; // your custom theme
 
 void main() {
@@ -12,10 +13,14 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Portfolio Dashboard',
+      title: 'Trackfolio',
       theme: appDarkTheme,
-      home: LoginPage(),
       debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(),
+        '/dashboard': (context) => const DashboardPage()
+      },
     );
   }
 }

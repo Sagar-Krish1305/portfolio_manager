@@ -4,7 +4,7 @@ import 'colors.dart';
 final ThemeData appDarkTheme = ThemeData(
   brightness: Brightness.dark,
   scaffoldBackgroundColor: kBackgroundColor,
-  primaryColor: kPrimaryTeal,
+  primaryColor: kPrimaryCyan,
   fontFamily: 'Roboto',
 
   inputDecorationTheme: InputDecorationTheme(
@@ -18,7 +18,7 @@ final ThemeData appDarkTheme = ThemeData(
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: kPrimaryTeal,
+      backgroundColor: kPrimaryCyan,
       foregroundColor: Colors.black,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
