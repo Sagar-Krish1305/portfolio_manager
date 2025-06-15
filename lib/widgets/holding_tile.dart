@@ -40,7 +40,7 @@ class HoldingTile extends StatelessWidget {
                 const EdgeInsets.all(6), // ✅ Shrinks image inside the circle
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(4)),
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
               color: Colors.white, // or transparent
               image: DecorationImage(
                 image: NetworkImage(logoUrl),
@@ -73,7 +73,7 @@ class HoldingTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                marketValue.toStringAsFixed(0),
+                "\$${marketValue.toStringAsFixed(0)}",
                 style: const TextStyle(
                   color: kTextColor,
                   fontWeight: FontWeight.bold,
