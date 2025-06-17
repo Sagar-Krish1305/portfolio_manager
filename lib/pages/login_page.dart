@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
 import 'package:portfolio_manager/pages/signup_page.dart';
+import 'package:portfolio_manager/pages/api_key_alpaca.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -106,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SignupPage(),
+                          builder: (context) => const ConnectToAlpacaPage(),
                         ),
                       );
                     },
