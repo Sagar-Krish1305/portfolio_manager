@@ -80,12 +80,16 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _handleConnect,
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/dashboard');
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryCyan,
                         foregroundColor: Colors.black,
                       ),
-                      child: const Text('Continue'),
+                      child: const Text(
+                        'Continue',
+                      ),
                     ),
                   ),
                 ],

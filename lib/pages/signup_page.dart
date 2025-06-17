@@ -114,7 +114,10 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _handleSignup,
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, '/api_key_configuration');
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryCyan,
                         foregroundColor: Colors.black,
@@ -132,11 +135,7 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
-                          );
+                          Navigator.pushReplacementNamed(context, '/login');
                         },
                         child: const Text(
                           'Log in',

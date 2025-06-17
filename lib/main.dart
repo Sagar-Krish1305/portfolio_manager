@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:portfolio_manager/pages/connect_to_alpaca.dart';
 import 'package:portfolio_manager/pages/dashboard_page.dart';
 import 'package:portfolio_manager/pages/login_page.dart';
+import 'package:portfolio_manager/pages/signup_page.dart';
 import 'theme.dart'; // your custom theme
 
 Future<void> main() async {
@@ -18,10 +20,12 @@ class MainApp extends StatelessWidget {
       title: 'Trackfolio',
       theme: appDarkTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => LoginPage(),
-        '/dashboard': (context) => const DashboardPage()
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignupPage(),
+        '/dashboard': (context) => const DashboardPage(),
+        '/api_key_configuration': (context) => const ConnectToAlpacaPage(),
       },
     );
   }

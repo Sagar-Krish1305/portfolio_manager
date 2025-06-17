@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
-import 'package:portfolio_manager/pages/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -103,12 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignupPage(),
-                        ),
-                      );
+                      Navigator.pushReplacementNamed(context, '/signup');
                     },
                     child: const Text(
                       'Sign up',
