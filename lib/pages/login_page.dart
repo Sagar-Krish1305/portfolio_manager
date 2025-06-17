@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
+import 'package:portfolio_manager/pages/signup_page.dart';
 
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-class LoginPage extends StatelessWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  LoginPage({super.key});
-
-  void _handleLogin(context) {
+  void _handleLogin() {
     print("Email: ${emailController.text}");
     print("Password: ${passwordController.text}");
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
     Navigator.pushReplacementNamed(context, '/dashboard');
   }
 
@@ -49,6 +53,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
+              // Email Field
               TextField(
                 controller: emailController,
                 style: const TextStyle(color: Colors.white),
@@ -58,6 +63,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
+              // Password Field
               TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -77,15 +83,17 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
+              // Login Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => _handleLogin(context),
+                  onPressed: _handleLogin,
                   child: const Text('Login'),
                 ),
               ),
               const SizedBox(height: 16),
 
+              // Sign Up Redirect
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -94,7 +102,14 @@ class LoginPage extends StatelessWidget {
                     style: TextStyle(color: kTextMuted),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignupPage(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Sign up',
                       style: TextStyle(color: kPrimaryCyan),
