@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
+import 'package:portfolio_manager/services/authentication.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,9 +13,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void _handleLogin() {
-    print("Email: ${emailController.text}");
-    print("Password: ${passwordController.text}");
+  Future<void> _handleLogin(context) async {
+    final authService = AuthService();
+    await authService.signIn(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
     Navigator.pushReplacementNamed(context, '/dashboard');
   }
 
@@ -46,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
               const Text(
                 'Login',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: kPrimaryCyan,
                   fontSize: 20,
                 ),
               ),
@@ -86,7 +90,12 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _handleLogin,
+                  onPressed: () => _handleLogin(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimaryCyan,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    minimumSize: const Size.fromHeight(48),
+                  ),
                   child: const Text('Login'),
                 ),
               ),

@@ -3,8 +3,8 @@ import 'package:portfolio_manager/colors.dart';
 import 'package:portfolio_manager/widgets/gradient_text.dart';
 import 'package:portfolio_manager/widgets/holding_tile.dart';
 
-class ExpandableListViewer extends StatefulWidget {
-  final List<HoldingTile> tiles;
+class ExpandableListViewer<T> extends StatefulWidget {
+  final List<T> tiles;
   final int previewCount;
   const ExpandableListViewer({
     super.key,
@@ -37,11 +37,14 @@ class _ExpandableListViewerState extends State<ExpandableListViewer> {
         ),
         const SizedBox(height: 8),
         TextButton(
-          onPressed: () {
-            setState(() => isExpanded = !isExpanded);
-          },
-          child: GradientText(text: (isExpanded ? 'Show Less' : 'View All'), gradient: LinearGradient(colors: [kProfitColor, kPrimaryCyan]), style: TextStyle(fontSize: 16))
-        ),
+            onPressed: () {
+              setState(() => isExpanded = !isExpanded);
+            },
+            child: GradientText(
+                text: (isExpanded ? 'Show Less' : 'View All'),
+                gradient:
+                    const LinearGradient(colors: [kProfitColor, kPrimaryCyan]),
+                style: const TextStyle(fontSize: 16))),
       ],
     );
   }

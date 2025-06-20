@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
-import 'package:portfolio_manager/pages/login_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -11,14 +11,14 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
   String? errorMessage;
 
-  void _handleSignup() {
+  void _handleSignup(context) async {
+    final email = emailController.text.trim();
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
@@ -29,15 +29,29 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    setState(() {
-      errorMessage = null;
-    });
+    try {
+      setState(() {
+        errorMessage = null;
+      });
 
-    print("Email: ${emailController.text}");
-    print("Username: ${usernameController.text}");
-    print("Password: $password");
+      // Create user with Firebase Auth
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    Navigator.pushReplacementNamed(context, '/dashboard');
+      // Navigate to dashboard after successful signup
+      Navigator.pushReplacementNamed(context, '/api_key_configuration');
+    } on FirebaseAuthException catch (e) {
+      // Handle errors like weak-password, email-already-in-use, etc.
+      setState(() {
+        errorMessage = e.message;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = "An unexpected error occurred.";
+      });
+    }
   }
 
   @override
@@ -85,12 +99,6 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    controller: usernameController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(labelText: 'Username'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
                     controller: passwordController,
                     obscureText: true,
                     style: const TextStyle(color: Colors.white),
@@ -115,8 +123,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, '/api_key_configuration');
+                        _handleSignup(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryCyan,

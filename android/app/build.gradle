@@ -2,6 +2,9 @@ import java.util.Properties
 import java.io.FileInputStream
 
 apply plugin: "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
 apply plugin: "kotlin-android"
 apply plugin: "dev.flutter.flutter-gradle-plugin"
 apply plugin: 'org.jetbrains.kotlin.android'

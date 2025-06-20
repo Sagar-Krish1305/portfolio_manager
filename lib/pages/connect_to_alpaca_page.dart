@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
+import 'package:portfolio_manager/providers/api_keys.dart' show AlpacaKeys;
+import 'package:portfolio_manager/services/authentication.dart';
+import 'package:provider/provider.dart';
 
 class ConnectToAlpacaPage extends StatefulWidget {
   const ConnectToAlpacaPage({super.key});
@@ -12,7 +15,7 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
   final TextEditingController apiKeyController = TextEditingController();
   final TextEditingController secretKeyController = TextEditingController();
 
-  void _handleConnect() {
+  Future<void> _handleConnect(alpacaKeyProvider, context) async {
     final apiKey = apiKeyController.text.trim();
     final secretKey = secretKeyController.text.trim();
 
@@ -21,6 +24,8 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
 
     // Validate and route forward
     if (apiKey.isNotEmpty && secretKey.isNotEmpty) {
+      await saveAlpacaKeys(apiKey, secretKey);
+      alpacaKeyProvider.setKeys(apiKey, secretKey);
       Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -31,6 +36,7 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final alpacaKeys = Provider.of<AlpacaKeys>(context, listen: false);
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
@@ -81,7 +87,7 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/dashboard');
+                        _handleConnect(alpacaKeys, context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryCyan,

@@ -28,7 +28,7 @@ class _HoldingsWidgetState extends State<HoldingsWidget> {
           Text(
             'Holdings',
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                color: kTextColor, fontWeight: FontWeight.bold, fontSize: 20),
           ),
           // HoldingTile(
           //   companyName: 'Microsoft',

@@ -7,6 +7,9 @@ environment:
   sdk: '>=3.4.3 <4.0.0'
 
 dependencies:
+  cloud_firestore: ^5.6.9
+  firebase_auth: ^5.6.0
+  firebase_core: ^3.14.0
   fl_chart: ^1.0.0
   flutter:
     sdk: flutter
@@ -14,6 +17,8 @@ dependencies:
   flutter_native_splash: ^2.4.0 # add this dependency
   flutter_speed_dial: ^7.0.0
   http: ^1.4.0
+  percent_indicator: ^4.2.5
+  provider: ^6.1.5
   
 
 dev_dependencies:

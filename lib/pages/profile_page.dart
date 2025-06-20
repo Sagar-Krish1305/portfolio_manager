@@ -6,8 +6,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = const TextStyle(color: Colors.white, fontSize: 16);
-    final labelStyle = const TextStyle(color: Colors.grey);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 16);
+    const labelStyle = TextStyle(color: Colors.grey);
 
     InputDecoration inputStyle(String label) => InputDecoration(
           labelText: label,
