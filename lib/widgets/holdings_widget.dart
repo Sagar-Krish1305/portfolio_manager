@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:portfolio_manager/colors.dart';
-import 'package:portfolio_manager/widgets/expandable_list_viewer.dart';
+import 'package:portfolio_manager/providers/api_keys.dart';
 import 'package:portfolio_manager/widgets/holding_tile.dart';
+import 'package:portfolio_manager/widgets/expandable_list_viewer.dart';
+import 'package:provider/provider.dart';
 
 class HoldingsWidget extends StatefulWidget {
   const HoldingsWidget({super.key});
@@ -11,7 +15,46 @@ class HoldingsWidget extends StatefulWidget {
 }
 
 class _HoldingsWidgetState extends State<HoldingsWidget> {
-  bool isExpanded = false;
+  List<Map<String, dynamic>> holdings = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHoldings();
+  }
+
+  Future<void> fetchHoldings() async {
+    final creds = Provider.of<AppAuthProvider>(context, listen: false);
+    final apiKey = creds.apiKey;
+    final secretKey = creds.secretKey;
+
+    // final url =
+    // Uri.parse('http://localhost:1305/get-holdings/$apiKey/$secretKey');
+    final url =
+        Uri.parse('http://192.168.1.5:1305/get-holdings/$apiKey/$secretKey');
+
+    try {
+      final res = await http.get(url);
+
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> jsonObject = jsonDecode(res.body);
+
+        // Extract values from the object
+        setState(() {
+          holdings = jsonObject.values
+              .map<Map<String, dynamic>>(
+                  (entry) => Map<String, dynamic>.from(entry))
+              .toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Failed to load holdings");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,80 +65,33 @@ class _HoldingsWidgetState extends State<HoldingsWidget> {
         color: kCardBackground,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Holdings',
             style: TextStyle(
-                color: kTextColor, fontWeight: FontWeight.bold, fontSize: 20),
+              color: kTextColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
-          // HoldingTile(
-          //   companyName: 'Microsoft',
-          //   logoUrl: 'https://logo.clearbit.com/microsoft.com',
-          //   shares: 8,
-          //   avgPrice: 250.00,
-          //   marketValue: 2000,
-          //   percentageChange: 0.0, // no change
-          // ),
-          // HoldingTile(
-          //   companyName: 'Microsoft',
-          //   logoUrl: 'https://logo.clearbit.com/microsoft.com',
-          //   shares: 8,
-          //   avgPrice: 250.00,
-          //   marketValue: 2000,
-          //   percentageChange: 0.0, // no change
-          // ),
-          // HoldingTile(
-          //   companyName: 'Tesla',
-          //   logoUrl: 'https://logo.clearbit.com/tesla.com',
-          //   shares: 5,
-          //   avgPrice: 700.00,
-          //   marketValue: 3200,
-          //   percentageChange: -4.2, // -4.2%
-          // ),
-          // HoldingTile(
-          //   companyName: 'Apple',
-          //   logoUrl: 'https://logo.clearbit.com/apple.com',
-          //   shares: 10,
-          //   avgPrice: 150.00,
-          //   marketValue: 125000,
-          //   percentageChange: 3.5, // +3.5%
-          // )
-          ExpandableListViewer(tiles: [
-            HoldingTile(
-              companyName: 'Microsoft',
-              logoUrl: 'https://logo.clearbit.com/microsoft.com',
-              shares: 8,
-              avgPrice: 250.00,
-              marketValue: 2000,
-              percentageChange: 0.0, // no change
-            ),
-            HoldingTile(
-              companyName: 'Microsoft',
-              logoUrl: 'https://logo.clearbit.com/microsoft.com',
-              shares: 8,
-              avgPrice: 250.00,
-              marketValue: 2000,
-              percentageChange: 0.0, // no change
-            ),
-            HoldingTile(
-              companyName: 'Tesla',
-              logoUrl: 'https://logo.clearbit.com/tesla.com',
-              shares: 5,
-              avgPrice: 700.00,
-              marketValue: 3200,
-              percentageChange: -4.2, // -4.2%
-            ),
-            HoldingTile(
-              companyName: 'Apple',
-              logoUrl: 'https://logo.clearbit.com/apple.com',
-              shares: 10,
-              avgPrice: 150.00,
-              marketValue: 125000,
-              percentageChange: 3.5, // +3.5%
-            )
-          ])
+          const SizedBox(height: 12),
+          isLoading
+              ? const CircularProgressIndicator()
+              : ExpandableListViewer(
+                  tiles: holdings
+                      .map((h) => HoldingTile(
+                            companyName: h['companyName'] ?? 'Unknown',
+                            logoUrl: h['logoUrl'] ?? '',
+                            shares: h['shares'] ?? 0,
+                            avgPrice: (h['avgPrice'] ?? 0).toDouble(),
+                            marketValue: (h['marketValue'] ?? 0).toDouble(),
+                            percentageChange:
+                                (h['percentageChange'] ?? 0).toDouble(),
+                          ))
+                      .toList(),
+                )
         ],
       ),
     );

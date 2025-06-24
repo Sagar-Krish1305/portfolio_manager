@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
 import 'package:portfolio_manager/widgets/gradient_text.dart';
-import 'package:portfolio_manager/widgets/holding_tile.dart';
 
 class ExpandableListViewer<T> extends StatefulWidget {
   final List<T> tiles;

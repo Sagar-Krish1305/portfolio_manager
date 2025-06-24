@@ -40,13 +40,15 @@ class AuthService {
   Stream<User?> get user => _auth.authStateChanges();
 }
 
-Future<void> saveAlpacaKeys(String apiKey, String secretKey) async {
+Future<void> saveAuthDetails(
+    String email, String apiKey, String secretKey) async {
   final user = FirebaseAuth.instance.currentUser;
 
   if (user != null) {
     await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
       'alpaca_api_key': apiKey,
       'alpaca_secret_key': secretKey,
+      'email': email,
     }, SetOptions(merge: true));
   }
 }

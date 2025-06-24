@@ -37,10 +37,10 @@ class PortfolioRiskLevelCard extends StatelessWidget {
           const SizedBox(width: 24),
 
           // Right: Risk metrics
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   "Your Portfolio Risk Level",
                   style: TextStyle(

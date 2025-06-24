@@ -10,8 +10,8 @@ class TimeFilterRow extends StatefulWidget {
 }
 
 class _TimeFilterRowState extends State<TimeFilterRow> {
-  final List<String> filters = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
-  String selected = 'ALL';
+  final List<String> filters = ['1W', '1M', '3M', '1Y'];
+  String selected = '1Y';
 
   void selectFilter(String label) {
     setState(() {

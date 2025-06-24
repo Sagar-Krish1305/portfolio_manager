@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
+import 'package:portfolio_manager/providers/api_keys.dart';
+import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -30,20 +32,23 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     try {
-      setState(() {
-        errorMessage = null;
-      });
+      setState(() => errorMessage = null);
 
       // Create user with Firebase Auth
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Navigate to dashboard after successful signup
+      // Save email to provider
+      final appAuthProvider =
+          Provider.of<AppAuthProvider>(context, listen: false);
+      appAuthProvider.setEmail(email);
+
+      // Navigate to API key config screen
       Navigator.pushReplacementNamed(context, '/api_key_configuration');
     } on FirebaseAuthException catch (e) {
-      // Handle errors like weak-password, email-already-in-use, etc.
       setState(() {
         errorMessage = e.message;
       });

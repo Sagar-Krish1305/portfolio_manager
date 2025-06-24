@@ -17,7 +17,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   runApp(
     ChangeNotifierProvider(
-      create: (_) => AlpacaKeys(),
+      create: (_) => AppAuthProvider(),
       child: const MainApp(),
     ),
   );
@@ -61,12 +61,12 @@ class AuthWrapper extends StatelessWidget {
         }
 
         // If user is logged in
-        if (snapshot.hasData) {
-          // comment this to reach the login page
-          // You can access user data here
-          print(snapshot.data!.email);
-          return const DashboardPage();
-        }
+        // if (snapshot.hasData) {
+        //   // comment this to reach the login page
+        //   // You can access user data here
+        //   print(snapshot.data!.email);
+        //   return const DashboardPage();
+        // }
 
         // If user is NOT logged in
         return const LoginPage();

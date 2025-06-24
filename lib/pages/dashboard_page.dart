@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:portfolio_manager/colors.dart';
 import 'package:portfolio_manager/widgets/holdings_widget.dart';
 import 'package:portfolio_manager/widgets/portfolio_summary_widget.dart';

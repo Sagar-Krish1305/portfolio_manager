@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
-import 'package:portfolio_manager/providers/api_keys.dart' show AlpacaKeys;
+import 'package:portfolio_manager/providers/api_keys.dart' show AppAuthProvider;
 import 'package:portfolio_manager/services/authentication.dart';
 import 'package:provider/provider.dart';
 
@@ -15,28 +15,38 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
   final TextEditingController apiKeyController = TextEditingController();
   final TextEditingController secretKeyController = TextEditingController();
 
-  Future<void> _handleConnect(alpacaKeyProvider, context) async {
+  Future<void> _handleConnect(
+      AppAuthProvider alpacaKeyProvider, context) async {
+    final email = alpacaKeyProvider.email;
     final apiKey = apiKeyController.text.trim();
     final secretKey = secretKeyController.text.trim();
 
-    print("API Key: $apiKey");
-    print("Secret Key: $secretKey");
-
-    // Validate and route forward
-    if (apiKey.isNotEmpty && secretKey.isNotEmpty) {
-      await saveAlpacaKeys(apiKey, secretKey);
-      alpacaKeyProvider.setKeys(apiKey, secretKey);
-      Navigator.pushReplacementNamed(context, '/dashboard');
-    } else {
+    if (apiKey.isEmpty || secretKey.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Both fields are required")),
+      );
+      return;
+    }
+
+    try {
+      // Save to Firestore
+      await saveAuthDetails(email!, apiKey, secretKey);
+
+      // Update local provider
+      alpacaKeyProvider.setKeys(api: apiKey, secret: secretKey);
+
+      // Route to dashboard
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to connect: ${e.toString()}')),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final alpacaKeys = Provider.of<AlpacaKeys>(context, listen: false);
+    final alpacaKeys = Provider.of<AppAuthProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
