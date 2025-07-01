@@ -1,14 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
+import 'package:portfolio_manager/providers/portfolio.dart';
 import 'package:portfolio_manager/widgets/gradient_text.dart';
 import 'package:portfolio_manager/widgets/supenses/portfolio_summary_suspense.dart';
 import 'package:portfolio_manager/widgets/time_filter_row.dart';
 import 'package:portfolio_manager/services/portfolio_service.dart';
 import 'dart:math';
+
+import 'package:provider/provider.dart';
 
 class PortfolioSummaryWidget extends StatefulWidget {
   const PortfolioSummaryWidget({super.key});
@@ -28,12 +30,15 @@ class _PortfolioSummaryWidgetState extends State<PortfolioSummaryWidget> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    final portfolioProvider =
+        Provider.of<PortfolioProvider>(context, listen: false);
+    _fetchData(portfolioProvider);
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchData(PortfolioProvider portfolioProvider) async {
     try {
-      final data = await fetchPortfolioHistory(); // fetch from backend
+      final data =
+          await fetchPortfolioHistory(portfolioProvider); // fetch from backend
 
       final sorted = data
           .map((e) => {
@@ -108,7 +113,8 @@ class _PortfolioSummaryWidgetState extends State<PortfolioSummaryWidget> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 GradientText(
-                  text: "\$${totalValue.toStringAsFixed(0)}",
+                  text:
+                      "${totalValue < 0 ? '-' : ''}\$${(totalValue * (totalValue < 0 ? -1 : 1)).toStringAsFixed(0)}",
                   style: const TextStyle(
                       fontSize: 42, fontWeight: FontWeight.bold),
                   gradient: const LinearGradient(
@@ -116,11 +122,13 @@ class _PortfolioSummaryWidgetState extends State<PortfolioSummaryWidget> {
                 ),
                 GradientText(
                   text:
-                      "${todayProfit >= 0 ? '+' : ''}\$${todayProfit.toStringAsFixed(0)} Today",
+                      "${todayProfit >= 0 ? '+' : '-'}\$${(todayProfit * (todayProfit < 0 ? -1 : 1)).toStringAsFixed(0)} Today",
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w600),
-                  gradient: const LinearGradient(
-                      colors: [kProfitColor, kProfitColor]),
+                  gradient: LinearGradient(
+                      colors: (todayProfit < 0
+                          ? [kLossColor, kLossColor]
+                          : [kProfitColor, kProfitColor])),
                 ),
                 Center(
                   child: Column(

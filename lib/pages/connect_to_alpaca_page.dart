@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:portfolio_manager/colors.dart';
 import 'package:portfolio_manager/providers/api_keys.dart' show AppAuthProvider;
+import 'package:portfolio_manager/providers/portfolio.dart';
 import 'package:portfolio_manager/services/authentication.dart';
+import 'package:portfolio_manager/services/portfolio_service.dart';
 import 'package:provider/provider.dart';
 
 class ConnectToAlpacaPage extends StatefulWidget {
@@ -16,7 +19,10 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
   final TextEditingController secretKeyController = TextEditingController();
 
   Future<void> _handleConnect(
-      AppAuthProvider alpacaKeyProvider, context) async {
+    PortfolioProvider portfolioProvider,
+    AppAuthProvider alpacaKeyProvider,
+    context,
+  ) async {
     final email = alpacaKeyProvider.email;
     final apiKey = apiKeyController.text.trim();
     final secretKey = secretKeyController.text.trim();
@@ -29,13 +35,35 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
     }
 
     try {
-      // Save to Firestore
+      // ✅ Validate credentials with /v2/account
+      final accountRes = await http.get(
+        Uri.parse('https://paper-api.alpaca.markets/v2/account'),
+        headers: {
+          'APCA-API-KEY-ID': apiKey,
+          'APCA-API-SECRET-KEY': secretKey,
+        },
+      );
+
+      if (accountRes.statusCode != 200) {
+        throw Exception("Invalid API key or secret.");
+      }
+
+      // ✅ Fetch and format portfolio using helper
+      final portfolioMap = await fetchPortfolioFromAlpaca(
+        apiKey: apiKey,
+        secretKey: secretKey,
+      );
+
+      // ✅ Save credentials to Firestore
       await saveAuthDetails(email!, apiKey, secretKey);
 
-      // Update local provider
+      // ✅ Update providers
       alpacaKeyProvider.setKeys(api: apiKey, secret: secretKey);
+      portfolioProvider.setPortfolio(portfolioMap);
 
-      // Route to dashboard
+      print('✅ Portfolio updated: ${portfolioProvider.portfolio}');
+
+      // ✅ Navigate to dashboard
       Navigator.pushReplacementNamed(context, '/dashboard');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,6 +75,8 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
   @override
   Widget build(BuildContext context) {
     final alpacaKeys = Provider.of<AppAuthProvider>(context, listen: false);
+    final portfolioProvider =
+        Provider.of<PortfolioProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
@@ -97,7 +127,7 @@ class _ConnectToAlpacaPageState extends State<ConnectToAlpacaPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        _handleConnect(alpacaKeys, context);
+                        _handleConnect(portfolioProvider, alpacaKeys, context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryCyan,

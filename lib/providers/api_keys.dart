@@ -39,9 +39,10 @@ class AppAuthProvider with ChangeNotifier {
 
       if (query.docs.isNotEmpty) {
         final data = query.docs.first.data();
-        apiKey = data['apiKey'];
-        secretKey = data['secretKey'];
+        apiKey = data['alpaca_api_key'];
+        secretKey = data['alpaca_secret_key'];
         email = data['email'];
+
         notifyListeners();
       } else {
         debugPrint('⚠️ No API keys found for $emailAddress');

@@ -35,15 +35,20 @@ class _ExpandableListViewerState extends State<ExpandableListViewer> {
           },
         ),
         const SizedBox(height: 8),
-        TextButton(
-            onPressed: () {
-              setState(() => isExpanded = !isExpanded);
-            },
-            child: GradientText(
-                text: (isExpanded ? 'Show Less' : 'View All'),
-                gradient:
-                    const LinearGradient(colors: [kProfitColor, kPrimaryCyan]),
-                style: const TextStyle(fontSize: 16))),
+        visibleItems.length > widget.previewCount
+            ? TextButton(
+                onPressed: () {
+                  setState(() => isExpanded = !isExpanded);
+                },
+                child: GradientText(
+                  text: isExpanded ? 'Show Less' : 'View All',
+                  gradient: const LinearGradient(
+                    colors: [kProfitColor, kPrimaryCyan],
+                  ),
+                  style: const TextStyle(fontSize: 16),
+                ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

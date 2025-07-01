@@ -12,26 +12,39 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  Future<void> _refresh() async {
+    // You can call a method in PortfolioProvider or manually reload the data
+    print('Refreshing dashboard...');
+    await Future.delayed(const Duration(seconds: 1)); // Simulate delay
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                PortfolioSummaryWidget(),
-                SizedBox(height: 16),
-                HoldingsWidget(),
-              ],
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          color: kPrimaryCyan,
+          backgroundColor: kCardBackground,
+          child: SingleChildScrollView(
+            physics:
+                const AlwaysScrollableScrollPhysics(), // required for RefreshIndicator to work
+            padding: const EdgeInsets.all(16),
+            child: const Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  PortfolioSummaryWidget(),
+                  SizedBox(height: 16),
+                  HoldingsWidget(),
+                ],
+              ),
             ),
           ),
         ),
       ),
-      floatingActionButton: SpeedDialWidget(currentRoute: '/dashboard'),
+      floatingActionButton: const SpeedDialWidget(currentRoute: '/dashboard'),
     );
   }
 }

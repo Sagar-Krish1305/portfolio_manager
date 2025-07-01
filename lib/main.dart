@@ -5,9 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:portfolio_manager/pages/connect_to_alpaca_page.dart';
 import 'package:portfolio_manager/pages/dashboard_page.dart';
 import 'package:portfolio_manager/pages/login_page.dart';
+import 'package:portfolio_manager/pages/profile_page.dart';
 import 'package:portfolio_manager/pages/risk_analysis_page.dart';
 import 'package:portfolio_manager/pages/signup_page.dart';
 import 'package:portfolio_manager/providers/api_keys.dart';
+import 'package:portfolio_manager/providers/portfolio.dart';
 import 'package:provider/provider.dart';
 import 'theme.dart';
 
@@ -16,8 +18,11 @@ Future<void> main() async {
   await dotenv.load();
   await Firebase.initializeApp();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppAuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppAuthProvider()),
+        ChangeNotifierProvider(create: (_) => PortfolioProvider()),
+      ],
       child: const MainApp(),
     ),
   );
@@ -40,6 +45,7 @@ class MainApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardPage(),
         '/api_key_configuration': (context) => const ConnectToAlpacaPage(),
         '/risk_analysis': (context) => const RiskAnalysisPage(),
+        '/profile': (context) => const ProfilePage(),
       },
       home: const AuthWrapper(),
     );

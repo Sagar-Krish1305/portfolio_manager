@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_manager/colors.dart';
 import 'package:portfolio_manager/providers/api_keys.dart';
+import 'package:portfolio_manager/providers/portfolio.dart';
 import 'package:portfolio_manager/services/authentication.dart';
+import 'package:portfolio_manager/services/portfolio_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -18,7 +20,10 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future<void> _handleLogin(
-      AppAuthProvider appAuthProvider, BuildContext context) async {
+    AppAuthProvider appAuthProvider,
+    PortfolioProvider portfolioProvider,
+    context,
+  ) async {
     setState(() => isLoading = true);
     final authService = AuthService();
 
@@ -28,13 +33,29 @@ class _LoginPageState extends State<LoginPage> {
         passwordController.text.trim(),
       );
 
-      final uid = userCredential?.email;
-      if (uid != null) {
-        await appAuthProvider.loadApiKeys(uid);
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      } else {
-        throw Exception('Invalid user ID');
+      final email = userCredential?.email;
+      if (email == null) throw Exception("User email not found.");
+
+      // 1️⃣ Load API keys from Firestore
+      await appAuthProvider.loadApiKeys(email);
+      final apiKey = appAuthProvider.apiKey;
+      final secretKey = appAuthProvider.secretKey;
+
+      if (apiKey == null || secretKey == null) {
+        throw Exception("API Key or Secret Key missing.");
       }
+
+      // 2️⃣ Fetch portfolio from Alpaca
+      final portfolioMap = await fetchPortfolioFromAlpaca(
+        apiKey: apiKey,
+        secretKey: secretKey,
+      );
+
+      // 3️⃣ Update provider
+      portfolioProvider.setPortfolio(portfolioMap);
+
+      // 4️⃣ Navigate to dashboard
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed: ${e.toString()}')),
@@ -48,6 +69,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final appAuthProvider =
         Provider.of<AppAuthProvider>(context, listen: false);
+    final portfolioProvider =
+        Provider.of<PortfolioProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: kBackgroundColor,
@@ -98,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                   : SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () => _handleLogin(appAuthProvider, context),
+                        onPressed: () => _handleLogin(
+                            appAuthProvider, portfolioProvider, context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: kPrimaryCyan,
                           padding: const EdgeInsets.symmetric(vertical: 14),
